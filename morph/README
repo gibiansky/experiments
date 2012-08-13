@@ -1,0 +1,13 @@
+To compile and run from source code:
+    - Navigate to the src directory:
+        cd morph/src;
+    - Compile all Java files:
+        javac *.java;
+    - Run the Main class with a modified classpath
+        java -cp ./trident.jar:/home/anthrosilver/school/linalg/morph/substance.jar:. Main
+
+To run from the Jar archives:
+    - Navigate to the bin directory:
+        cd morph/bin;
+    - Run the morpher jar file:
+        java -jar Morph.jar
