@@ -1,0 +1,1 @@
+10x10 is a saved file with an example of morphing. Sadly, it only works if the files are named the same as these and are in a directory called "/home/gibi/code/experiments/morph/dogs", which is how my local directory was organized. (Yeah, the design is far from optimal.)

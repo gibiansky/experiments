@@ -9,7 +9,7 @@ public class Main {
     static JPanel left;
     static JPanel right;
     static ImagePanel imagePane;
-    static int XMESH = 7, YMESH = 7;
+    static int XMESH = 10, YMESH = 10;
     static int currentFirstImage = -1;
 
     public static void main(String[] args){
