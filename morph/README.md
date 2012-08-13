@@ -5,15 +5,15 @@ From source:
 ------------
 1. Navigate to the src directory:
 
-    cd morph/src;
+       cd morph/src;
 
 2. Compile all Java files:
 
-    javac *.java;
+       javac *.java;
 
 3. Run the Main class with a modified classpath
 
-    java -cp ./trident.jar:/home/anthrosilver/school/linalg/morph/substance.jar:. Main
+       java -cp ./trident.jar:/home/anthrosilver/school/linalg/morph/substance.jar:. Main
 
 
 From compiled Jar archive:
@@ -24,5 +24,5 @@ From compiled Jar archive:
 
 2. Run the morpher jar file:
 
-     java -jar Morph.jar
+        java -jar Morph.jar
 
