@@ -1,0 +1,335 @@
+\documentclass{beamer}
+
+\usepackage{puremath}
+\usepackage{minted}
+\newminted{matlab}{mathescape, linenos, numbersep=5pt, frame=lines, framesep=2mm, fontsize=\tiny}
+\usepackage{hyperref}
+\usepackage{multimedia}
+
+\setbeamercolor{note}{fg=black,bg=lightgray}
+
+\title{Quadcopter Dynamics, Simulation, and Control}
+\author{Andrew Gibiansky \\ \texttt{andrew.gibiansky@gmail.com}}
+\date{\today}
+
+\usetheme{Warsaw}
+
+\begin{document}
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\section{Quadcopters and Helicopters}
+\subsection{Helicopters}
+\begin{frame}
+    \frametitle{Helicopters}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{center}
+                \huge{Helicopter}
+            \end{center}
+            \cgfx{imgs/presentation/helicopter.jpg}{0.33}
+            \cgfx{imgs/presentation/helicopter2.jpg}{0.11}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{center}
+                \huge{Swashplate}
+            \end{center}
+            \cgfx{imgs/presentation/swashplate2.jpg}{0.33}
+            \cgfx{imgs/presentation/swashplate.jpg}{0.20}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Helicopter Thrusts}
+    \begin{center}
+        \gfx{imgs/presentation/helicopter_physics.jpg}{0.6}
+        \gfx{imgs/presentation/helicopter_physics2.jpg}{0.3} \\
+        Swashplate mechanism provides control over extra degrees of freedom.
+    \end{center}
+\end{frame}
+
+\subsection{Quadcopters}
+\begin{frame}
+    \frametitle{Quadcopters}
+    \begin{center}
+        \gfx{imgs/presentation/quadcopter.jpg}{0.25} 
+        \gfx{imgs/presentation/quadcopter2.jpg}{0.25} \\
+        Note the lack of swashplates! 
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Quadcopter Thrusts}
+    \begin{center}
+        \gfx{imgs/presentation/quad_physics1.jpg}{0.55} 
+        \gfx{imgs/presentation/quad_physics2.jpg}{0.55} \\
+        Degrees of freedom provided by extra motors.
+    \end{center}
+\end{frame}
+
+\subsection{Comparison}
+\begin{frame}
+    \frametitle{Quadcopters vs. Helicopters}
+    \begin{itemize}
+        \item
+            Quadcopters
+            \begin{itemize}
+                \item Simpler mechanism: no swashplates.
+                \item Can be very small, yet controllable.
+                \item Very versatile.
+                \item Cheap!
+            \end{itemize}
+        \item
+            Helicopters
+            \begin{itemize}
+                \item Much simpler to control (possible without electronic stabilization).
+                \item Have been scaled up to large sizes.
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\section{Dynamics}
+\subsection{Kinematics}
+\begin{frame}
+    \frametitle{Frames}
+    \begin{figure}[h]
+        \cgfx{imgs/Quadcopter_Coordinates.png}{0.3}
+        \caption{Quadcopter Body Frame and Inertial Frame}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Forces and Torques}
+    \begin{itemize}
+        \item Thrust force:
+            \[T_B = \sum_{i=1}^4 T_i = k\bmatr{ 0 \\ 0 \\ \sum {\omega_i}^2 }.\]
+        \item Drag force:
+            \[F_D = \bmatr{
+                -k_d\dot x \\
+                -k_d\dot y \\
+                -k_d\dot z \\
+            }\]
+        \item Motor torques:
+            \[\tau_B = \bmatr{
+                Lk({\omega_1}^2 - {\omega_3}^2) \\
+                Lk({\omega_2}^2 - {\omega_4}^2) \\
+                b\left( {\omega_1}^2 -  {\omega_2}^2 +  {\omega_3}^2 -  {\omega_4}^2\right)
+            }\]
+    \end{itemize}
+\end{frame}
+
+\subsection{Equations of Motion}
+\begin{frame}
+    \frametitle{Equations of Motion: Linear}
+    \begin{itemize}
+        \item Inertial Frame:
+            \[m\ddot{x} = \bmatr{0 \\ 0 \\ -mg} + RT_B + F_D\]
+        \item Body Frame:
+            \[m\ddot{x} = R^{-1}\bmatr{0 \\ 0 \\ -mg} + T_B + R^{-1}F_D - \omega\times(m\dot x)\]
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Equations of Motion: Rotational}
+    \begin{itemize}
+        \item Euler's Equations (Rigid Body Dynamics):
+            \[I\dot\omega + \omega\times (I\omega) = \tau\]
+        \item Body Frame Dynamics:
+            \[I = \bmatr{I_{xx} & 0 & 0 \\ 0 & I_{yy} & 0 \\ 0 & 0 & I_{zz}}.\]
+            \[\dot\omega = \bmatr{
+                \tau_\phi {I_{xx}}^{-1} \\
+                \tau_\theta {I_{yy}}^{-1} \\
+                \tau_\psi {I_{zz}}^{-1}
+            } - \bmatr{
+                \frac{I_{yy} - I_{zz}}{I_{xx}} \omega_y\omega_z \\ 
+                \frac{I_{zz} - I_{xx}}{I_{yy}} \omega_x\omega_z  \\
+                \frac{I_{xx} - I_{yy}}{I_{zz}} \omega_x\omega_y
+            }\]
+    \end{itemize}
+\end{frame}
+
+\subsection{Simulation}
+\begin{frame}[fragile]
+    \frametitle{Simulation}
+\begin{matlabcode}
+% Simulation times, in seconds.
+start_time = 0; end_time = 10; dt = 0.005;
+times = start_time:dt:end_time;
+N = numel(times);
+
+% Initial simulation state.
+x = [0; 0; 10]; xdot = zeros(3, 1); theta = zeros(3, 1);
+
+% Simulate some disturbance in the angular velocity.
+% The magnitude of the deviation is in radians / second.
+deviation = 100;
+thetadot = deg2rad(2 * deviation * rand(3, 1) - deviation);
+
+% Step through the simulation, updating the state.
+for t = times
+    i = input(t);                                          % Get controller input
+    omega = thetadot2omega(thetadot, theta);               % Convert $(\dot\phi, \dot\theta, \dot\psi) \to \dot\omega$
+    a = acceleration(i, theta, xdot, m, g, k, kd);         % Compute linear acceleration
+    omegadot = angular_acceleration(i, omega, I, L, b, k); % Compute angular acceleration
+    omega = omega + dt * omegadot;                         % $\omega = \omega + dt\times\dot\omega$
+    thetadot = omega2thetadot(omega, theta);               % Convert $\omega \to (\dot\phi, \dot\theta, \dot\psi)$
+    theta = theta + dt * thetadot;                         % $\vec\theta = \vec\theta + dt\times(\dot\phi, \dot\theta, \dot\psi)$
+    xdot = xdot + dt * a;                                  % $\dot{x} = \dot{x} + dt\times a$
+    x = x + dt * xdot;                                     % $x = x + dt\times\dot{x}$
+end
+\end{matlabcode}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Visualization}
+    \cgfx{imgs/presentation/simulation.png}{0.22}
+    \begin{center}
+        \href{http://www.youtube.com/watch?v=cVrM1iAd8ic}{YouTube Movie}
+    \end{center}
+\end{frame}
+
+\section{Control}
+\subsection{PD Control}
+\begin{frame}
+    \frametitle{PD Control}
+    \begin{itemize}
+        \item Control signal should be turned into a torque:
+            \[\tau = I u(t) = I\dot\omega\]
+        \item We can set torques:
+            \[\bmatr{\tau_\phi \\ \tau_\theta \\ \tau_\psi} = \bmatr{
+                -I_{xx} \left( K_d\dot\phi + K_p \int_0^T \dot\phi \dd t \right) \\
+                -I_{yy} \left( K_d\dot\theta + K_p \int_0^T \dot\theta \dd t \right) \\
+                -I_{zz} \left( K_d\dot\psi + K_p \int_0^T \dot\psi \dd t \right) \\
+            }\]
+        \item Our electronic gyro outputs angular velocities, so we integrate them to get the angle.
+            This integral is multiplied by the  \emph{proportional} gain.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Motor Angular Velocities}
+    \begin{itemize}
+        \item We do not actually set torques, we set voltages over the motors. These correspond
+            directly to the motor angular velocities $\omega_i$.
+
+        \item We can solve for the inputs $\gamma_i = {\omega_i}^2$:
+            \[\tau_B = \bmatr{
+                Lk({\gamma_1} - {\gamma_3}) \\
+                Lk({\gamma_2} - {\gamma_4}) \\
+                b\left( {\gamma_1} -  {\gamma_2} +  {\gamma_3} -  {\gamma_4}\right)
+            } = \bmatr{
+                -I_{xx} \left( K_d\dot\phi + K_p \int_0^T \dot\phi \dd t \right) \\
+                -I_{yy} \left( K_d\dot\theta + K_p \int_0^T \dot\theta \dd t \right) \\
+                -I_{zz} \left( K_d\dot\psi + K_p \int_0^T \dot\psi \dd t \right) \\
+            }\]
+        \item For the last constraint, choose one to keep the quadcopter aloft:
+            \[T = \frac{mg}{\cos\theta\cos\phi}\]
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{PD Control}
+    \begin{figure}[h]
+        \cgfx{imgs/pd_controller.png}{0.43}
+        \caption{
+            Left: Angular velocities. Right: angular displacements. $\phi$, $\theta$, $\psi$ are coded as red, green, and blue.
+            Note that there is some small steady-state error (approximately 0.3$^\circ$).
+        }
+    \end{figure}
+\end{frame}
+
+\subsection{PID Control}
+\begin{frame}
+    \begin{itemize}
+        \item We can do better by adding an integral term to make this a PID controller.
+            \begin{align*}
+                e_\phi &= K_d\dot\phi + K_p \int_0^T\dot\phi\dd t + K_i \int_0^T\int_0^T\dot\phi\dd t\dd t \\
+                e_\theta &= K_d\dot\theta + K_p \int_0^T\dot\theta\dd t + K_i \int_0^T\int_0^T\dot\theta\dd t\dd t \\
+                e_\psi &= K_d\dot\psi + K_p \int_0^T\dot\psi\dd t + K_i \int_0^T\int_0^T\dot\psi\dd t\dd t \\
+            \end{align*}
+        \item To avoid integral wind-up, only start integrating the double-integral once the angle
+            deviation is relatively small.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Integral Windup}
+    \begin{figure}[H]
+        \cgfx{imgs/windup.png}{0.4}
+        \caption{
+            In some cases, integral wind-up can cause lengthy oscillations instead of settling. In other cases,
+            wind-up may actually cause the system to become unstable, instead of taking longer to reach
+            a steady state.
+        }
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{PID Control}
+    \begin{figure}[H]
+        \cgfx{imgs/pid_controller.png}{0.45}
+        \caption{
+            With a properly implemented PID, we achieve an error of approximately 0.06$^\circ$ after 10 seconds.
+        }
+    \end{figure}
+\end{frame}
+
+\subsection{Automatic Gain Tuning}
+\begin{frame}
+    \frametitle{Automatic Gain Tuning}
+    \begin{itemize}
+        \item Tuning the PID gains ($K_i$, $K_p$, and $K_d$) can be difficult.
+        \item Quality of results depends on gain values and the ratios of the different gain values.
+        \item ``Best'' gains might be different for different modes of operation.
+        \item Requires expert intuition and a lot of time to tune them.
+        \item We would like to do this automatically.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Extremum Seeking}
+    \begin{itemize}
+        \item Define a cost function, defining the quality of a set of parameters:
+            \[J(\vec\theta) = \inv{t_f - t_o} \int_{t_0}^{t_f} e(t, \vec\theta)^2 \dd t\]
+        \item Use gradient descent to minimize this cost function in parameter-space:
+            \[\vec\theta(k + 1) = \vec\theta(k) - \alpha \nabla J(\vec \theta)\]
+        \item Approximate gradient numerically:
+            \[\nabla J(\vec\theta) = \left(\p{ }{K_p} J(\vec\theta), \p{ }{K_i} J(\vec\theta), \p{ }{K_d} J(\vec\theta)\right).\]
+            \[\p{ }{K} J(\vec\theta) \approx \frac{J(\vec\theta + \delta\cdot \hat{u}_K) - J(\vec\theta- \delta\cdot \hat{u}_K)}{2\delta}\] 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Gradient Descent Tricks}
+    \begin{itemize}
+        \item Adjust step size $\alpha$ as we go along, to become more precise as time goes on.
+        \item Computing $e(t, \vec\theta)$ means running a simulation with some random initial
+            disturbance. Use many simulations, take the average. As we go along, average more
+            simulations.
+        \item Repeat many times to produce many local minima, then choose the best one and call it
+            the ``global minimum''.
+        \item Automatically choose a time to stop iterating (when we're no longer improving our
+            average cost).
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Manual Gains vs. Automatically Tuned Gains}
+    \begin{figure}[H]
+        \cgfx{imgs/pid_gains_comparison.png}{0.51}
+    \end{figure}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Questions?}
+    \begin{center}
+        \scriptsize
+        Thank you to Professors Donatello Materassi and Rob Wood for their help.
+    \end{center}
+\end{frame}
+
+
+\end{document}

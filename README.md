@@ -9,3 +9,4 @@ __Projects__:
 * neural-network/ - An implementation of a feed-forward neural network in MATLAB for handwritten digit recognition. For information on neural networks, take a look at the following [explanation](http://www.gibiansky.com/2012/08/machine-learning-neural-networks.html).
 * cpu/ - A toy CPU created in Verilog for use with a Cyclone II Altera Starter Kit FPGA board. The CPU executes (compiled versions of) a custom MIPS-like assembly language; the compiler for this language and the description are in simple/.
 * simple/ - A toy C-like language called "Simple", which compiles to a custom MIPS-like assembly, which can execute on a custom CPU for a Cyclone II FPGA board.
+* quadcopter/ - A detailed description of quadcopter motion dynamics and the control used for quadcopter stabilization. Includes a simulation and movie.
