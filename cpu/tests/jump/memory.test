@@ -1,0 +1,40 @@
+// Data memory
+00000000
+00000000
+00000000
+00000000
+00000000
+
+// Skip to bootloader start
+@40
+
+// Instruction contents
+
+80000004 // jump forward 1 // 2
+012a0000 // write IP to r9
+
+// r2 > r0
+7040000c // 4
+84000008 // if true jump forward 2 // 6
+008c0000 // store result in 4 (skipped)
+00cc0000 // store in 6 (skipped)
+00ec0000 // store in 7 // 8
+
+// 5 < r0, store result in r0
+64000005 // 10
+84000004 // if true jump forward 1 // 12
+000c0000 // store result in r0 // 14
+
+// 3 <= r1, store result in r1
+6c200003 // 16
+88000004 // if false jump forward 1 // 18
+002c0000
+
+// 3 >= r2, store result in r2
+7c400003 // 20
+88000004 // if false jump forward 1 // 22
+004c0000 // 24
+
+// Set aluout register to zero
+d800000 // 26
+

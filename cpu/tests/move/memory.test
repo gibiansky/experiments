@@ -1,0 +1,35 @@
+// Data memory
+00000000
+00000000
+00000000
+00000000
+00000000
+
+// Skip to bootloader start
+@40
+
+// Instruction contents
+
+// Move 0 into register 0
+c000000 // 2
+
+// Move numbers 0x100, 0x200, ..., 0x500 into registers 1 to 5
+c200100 
+c400200 
+c600300
+c800400
+ca00500 // 12
+
+// Move contents of registers 1 through 5 into memory slots 1 to 5
+4010000 
+4020004
+4030008
+404000c
+4050010 // 22
+
+// Move contents of memory slots 1 to 5 into registers 5 to 1 (reversed)
+8200010
+840000c
+8600008
+8800004
+8a00000 // 37

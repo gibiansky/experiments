@@ -1,0 +1,47 @@
+// Data memory
+00000000
+00000000
+00000000
+00000000
+00000000
+
+// Skip to bootloader start
+@40
+
+// Instruction contents
+
+// r2 > r0, store result in 4
+7040000c
+008c0000
+
+// r2 >= r0, store result in 5
+7840000c
+00ac0000
+
+// r0 < r1, store result in 6
+6001000c
+00cc0000
+
+// r0 <= r1, store result in 7
+6801000c
+00ec0000
+
+// 5 < r0, store result in r0
+64000005
+000c0000
+
+// 3 <= r1, store result in r1
+6c200003
+002c0000
+
+// 3 >= r2, store result in r2
+7c400003
+004c0000
+
+// 1 > r3, store result in r3
+74600001
+006c0000
+
+// Set aluout register to zero
+d800000
+

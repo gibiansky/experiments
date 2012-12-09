@@ -1,0 +1,44 @@
+// Data memory
+00000000
+00000000
+00000000
+00000000
+00000000
+
+// Skip to bootloader start
+@40
+
+// Instruction contents
+
+
+// Add r0, r1, store result in 4
+20010004
+
+// Sub r0, r1, store result in 5
+28010005
+
+// Mul r0, r1, store result in 6
+30010006
+
+// Div r0, r1, store result in 7
+38010007
+
+// Add r0, 5, store result in r0
+24000005
+000c0000
+
+// Sub r1, 3, store result in r1
+2c200003
+002c0000
+
+// Mul r2, 3, store result in r2
+34400003
+004c0000
+
+// Div r3, 2, store result in r3
+3c600002
+006c0000
+
+// Set aluout register to zero
+d800000
+
