@@ -34,6 +34,8 @@ function [cost, gradient] = neural_network_cost(theta, X, y, num_layers, num_uni
         sums{i} = (weights{i} * biased_values{i})';
         layer_values{i + 1} = sigmoid(sums{i});
 
+        % Release memory
+        layer_values{i} = [];
     end
 
     % Collect output at output layer

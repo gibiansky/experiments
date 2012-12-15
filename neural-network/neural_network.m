@@ -27,7 +27,7 @@ num_parameters_hidden = (num_units * (num_units + 1));
 num_parameters =  num_parameters_input + (layers - 1) * num_parameters_hidden + num_parameters_output;
 
 % Randomly initialize weights into a row vector
-epsilon = 0.50;
+epsilon = 0.05;
 init_theta = rand(1, num_parameters) * epsilon - epsilon / 2;
 
 % Minimize neural network cost function
