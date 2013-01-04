@@ -5,6 +5,7 @@
 % Parameters:
 %   - X: dataset, with each row being a data point, and columns being variables
 function X = normalize(X)
+keyboard
     % Remove zero-variance elements. They add no information.
     X(:, find(range(X) == 0)) = [];
 

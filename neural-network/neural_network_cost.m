@@ -69,7 +69,7 @@ function [cost, gradient] = neural_network_cost(theta, X, y, num_layers, num_uni
         gradients{i} = 1/ m * (biased_values{i} * delta{i})';
 
         % Add in gradient regularization, but don't regularize bias weight
-        regularization_gradient = lambda / m * weights {i};
+        regularization_gradient = lambda / m * weights{i};
         regularization_gradient(:, 1) = 0;
 
         % Add regularization to unregularized gradient
