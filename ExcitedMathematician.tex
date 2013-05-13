@@ -1,0 +1,55 @@
+\documentclass{article}
+
+% Include the LaTeX random number generator
+% Seed using current time (minute) and generate numbers \in [-100, 100]
+\usepackage[seed=1,first=-100,last=100]{lcg}
+
+% Include string parsing utilities
+\usepackage{xstring}
+
+% Include some text generation
+\usepackage[english]{babel}
+\usepackage[random]{blindtext}
+
+% Useless packages and other bizarre dooper
+\usepackage{amsmath}
+
+% Convert text into text written by an excited mathematician
+\newcommand\ExcitedMathematician[1]{%
+    % Generate a new random number for this punctuation mark
+    \rand
+    % Find the first punctuation mark (if it exists).  Find punctuation marks followed by spaces,
+    % replace them with non-breaking spaces. This could be fixed to allow any sort of spaces.
+    \StrSubstitute[1]{#1}{. }{%
+        % If the generated random number is negative, keep the period. Otherwise, switch to an
+        % exclamation mark.
+        \ifnum\value{rand}<0%
+        .~\else! \fi
+    }[\substituted] % Store the result into the \substituted variable
+%
+    % If a period exists in the remainder, recurse.
+    \IfSubStr{\substituted}{. }{%
+        \ExcitedMathematician{\substituted}
+    }{
+        % If no period exists in the remainder of the text, output it.
+        \substituted
+    }
+}
+
+\title{Excited Mathematician Demo}
+\author{Silver Gibiansky}
+\date{Past Midnight, Thursday, March 7th, 2013, Year of the Snake}
+
+
+\begin{document}
+\maketitle
+
+\section{Derivation of the Navier-Stokes Equations}
+
+\ExcitedMathematician{
+The evaluation of agents is a private grand challenge. A key issue in steganography is the significant unification of Web services and lambda calculus [31,7,22,3,25]. The effect on lossless interactive artificial intelligence of this finding has been well-received. To what extent can IPv4 be developed to surmount this riddle?
+To our knowledge, our work here marks the first heuristic improved specifically for hierarchical databases. However, this approach is rarely considered appropriate. Indeed, 128 bit architectures [28,29] and extreme programming have a long history of colluding in this manner. Thusly, we see no reason not to use efficient communication to investigate thin clients. Such a claim is entirely an appropriate ambition but fell in line with our expectations.
+A typical method to fix this grand challenge is the emulation of semaphores that made deploying and possibly harnessing expert systems a reality. In addition, it should be noted that our heuristic turns the homogeneous symmetries sledgehammer into a scalpel. Certainly, SAI should not be evaluated to deploy digital-to-analog converters. For example, many heuristics analyze the investigation of telephony [17]. As a result, we see no reason not to use lossless configurations to refine e-commerce.
+}
+
+\end{document}
