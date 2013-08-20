@@ -59,7 +59,14 @@ function animate(data, model, thrusts, plots)
             set(thrusts(i), 'Matrix', move * rotate * scalez);
         end
 
-        % Update the drawing.
+        % Update the drawing.      
+        xmin = data.x(1,t)-20;
+        xmax = data.x(1,t)+20;
+        ymin = data.x(2,t)-20;
+        ymax = data.x(2,t)+20;
+        zmin = data.x(3,t)-5;
+        zmax = data.x(3,t)+5;
+        axis([xmin xmax ymin ymax zmin zmax]);
         drawnow;
 
         % Use the bottom two parts for angular velocity and displacement.
